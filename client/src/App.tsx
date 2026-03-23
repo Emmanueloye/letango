@@ -34,8 +34,8 @@ import EditGroup, {
 } from './pages/userGroupMgt/EditGroup';
 import KYC from './pages/userGroupMgt/KYC';
 import PersonalWallet from './pages/wallet/PersonalWallet';
-import WalletTransaction from './pages/wallet/WalletTransaction';
-import TransactionFlow from './pages/wallet/TransactionFlow';
+// import WalletTransaction from './pages/wallet/WalletTransaction';
+// import TransactionFlow from './pages/wallet/TransactionFlow';
 import GroupLayout from './layouts/GroupLayout';
 import GroupView from './pages/userGroupMgt/GroupView';
 import CreateGroupRules from './pages/userGroupMgt/CreateGroupRules';
@@ -59,9 +59,9 @@ import WithdrawContribution, {
   action as withdrawContributionAction,
 } from './pages/userGroupMgt/WithdrawContribution';
 import MyContributionTransaction from './pages/userGroupMgt/MyContributionTransaction';
-import GroupReportLanding from './pages/report/GroupReportLanding';
-import GroupTransactions from './pages/report/GroupTransactions';
-import GroupStatement from './pages/report/GroupStatement';
+// import GroupReportLanding from './pages/report/GroupReportLanding';
+// import GroupTransactions from './pages/report/GroupTransactions';
+// import GroupStatement from './pages/report/GroupStatement';
 import UserManager, {
   loader as userManagerLoader,
 } from './pages/admin/usersManager/UserManager';
@@ -75,7 +75,7 @@ import ContributionClosedWithdrawals, {
   loader as contributionClosedWithdrawalLoader,
 } from './pages/admin/withdrawals/ContributionClosedWithdrawals';
 import ClosedWithdrawals from './pages/admin/withdrawals/ContributionClosedWithdrawals';
-import Statements from './pages/report/Statements';
+// import Statements from './pages/report/Statements';
 import EditUser, {
   loader as editUserLoader,
   action as editUserAction,
@@ -152,12 +152,12 @@ const router = createBrowserRouter([
         path: 'personal-wallet',
         children: [
           { index: true, element: <PersonalWallet /> },
-          {
-            path: 'transactions',
-            element: <WalletTransaction />,
-          },
-          { path: 'inflows', element: <TransactionFlow /> },
-          { path: 'outflows', element: <TransactionFlow /> },
+          // {
+          //   path: 'transactions',
+          //   element: <WalletTransaction />,
+          // },
+          // { path: 'inflows', element: <TransactionFlow /> },
+          // { path: 'outflows', element: <TransactionFlow /> },
         ],
       },
 
@@ -228,14 +228,14 @@ const router = createBrowserRouter([
                 path: 'transactions',
                 element: <MyContributionTransaction />,
               },
-              {
-                path: 'reports',
-                children: [
-                  { index: true, element: <GroupReportLanding /> },
-                  { path: 'transaction', element: <GroupTransactions /> },
-                  { path: 'statement', element: <GroupStatement /> },
-                ],
-              },
+              // {
+              //   path: 'reports',
+              //   children: [
+              //     { index: true, element: <GroupReportLanding /> },
+              //     { path: 'transaction', element: <GroupTransactions /> },
+              //     { path: 'statement', element: <GroupStatement /> },
+              //   ],
+              // },
             ],
           },
         ],
@@ -313,7 +313,7 @@ const router = createBrowserRouter([
           },
           { path: 'closed-withdrawals', element: <ClosedWithdrawals /> },
           { path: 'kyc-review', element: <KYCReview /> },
-          { path: 'statement', element: <Statements /> },
+          // { path: 'statement', element: <Statements /> },
         ],
       },
     ],

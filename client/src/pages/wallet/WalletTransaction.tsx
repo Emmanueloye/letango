@@ -1,4 +1,4 @@
-import DateRangeSelector from '../../components/UI/DateRangeSelector';
+// import DateRangeSelector from '../../components/UI/DateRangeSelector';
 import LinkBtn from '../../components/UI/LinkBtn';
 import Table from '../../components/UI/Table';
 import TransactionBox from '../../components/UI/TransactionBox';
@@ -10,7 +10,7 @@ const WalletTransaction = () => {
         <LinkBtn btnText='back' url='/account/personal-wallet' />
       </div>
       {/* Date selector */}
-      <DateRangeSelector />
+      {/* <DateRangeSelector /> */}
       {/* table */}
       <div className='hidden lg:block'>
         <h4 className='text-center mt-8 font-600'>Transaction history</h4>

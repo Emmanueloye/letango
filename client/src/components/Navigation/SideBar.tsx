@@ -73,7 +73,7 @@ const SideBar = ({ user }: { user: User }) => {
             Personal Profile
           </NavLink>
         </li>
-        <li className='mb-2 p-1'>
+        {/* <li className='mb-2 p-1'>
           <NavLink
             to='/account/personal-wallet'
             className={({ isActive }) =>
@@ -83,8 +83,8 @@ const SideBar = ({ user }: { user: User }) => {
           >
             Personal Wallet
           </NavLink>
-        </li>
-        <li className='mb-2 p-1'>
+        </li> */}
+        {/* <li className='mb-2 p-1'>
           <NavLink
             to='/account/kyc'
             className={({ isActive }) =>
@@ -94,7 +94,7 @@ const SideBar = ({ user }: { user: User }) => {
           >
             KYC
           </NavLink>
-        </li>
+        </li> */}
         <li className='mb-2 p-1'>
           <NavLink
             to='/account/manage-group'
@@ -106,7 +106,7 @@ const SideBar = ({ user }: { user: User }) => {
             Manage Group
           </NavLink>
         </li>
-        <li className='mb-2 p-1'>
+        {/* <li className='mb-2 p-1'>
           <NavLink
             to='/account/report-user'
             className={({ isActive }) =>
@@ -116,7 +116,7 @@ const SideBar = ({ user }: { user: User }) => {
           >
             report user
           </NavLink>
-        </li>
+        </li> */}
 
         {roles.includes(user.role) && (
           <>
@@ -168,7 +168,7 @@ const SideBar = ({ user }: { user: User }) => {
               </NavLink>
             </li>
 
-            <li className='mb-2 p-1'>
+            {/* <li className='mb-2 p-1'>
               <NavLink
                 to='/account/admin/kyc-review'
                 className={({ isActive }) =>
@@ -178,8 +178,8 @@ const SideBar = ({ user }: { user: User }) => {
               >
                 KYC review & approval
               </NavLink>
-            </li>
-            <li className='mb-2 p-1'>
+            </li> */}
+            {/* <li className='mb-2 p-1'>
               <NavLink
                 to='/account/admin/statement'
                 className={({ isActive }) =>
@@ -189,7 +189,7 @@ const SideBar = ({ user }: { user: User }) => {
               >
                 statement
               </NavLink>
-            </li>
+            </li> */}
           </>
         )}
       </ul>
