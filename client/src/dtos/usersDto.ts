@@ -1,0 +1,22 @@
+export type User = {
+  _id: string;
+  userRef: string;
+  surname: string;
+  otherNames: string;
+  email: string;
+  password?: string;
+  isVerified: boolean;
+  verificationDate?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  passwordChangedAt?: Date;
+  photo?: string;
+  phone: string;
+  photoPublicId?: string;
+  role: string;
+  personalWallet: number;
+  inflow: number;
+  outflow: number;
+  isActive: boolean;
+  createdAt: Date;
+};

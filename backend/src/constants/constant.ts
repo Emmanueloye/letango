@@ -1,0 +1,1 @@
+export const MAX_CONTRIBUTION_ADMIN_LIMIT = 3;
