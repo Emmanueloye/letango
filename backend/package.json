@@ -5,9 +5,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc",
-    "start": "node ./dist/server.js",
+    "start": "node ./build/server.js",
     "dev": "nodemon ./src/server.ts",
-    "setup-production": "npm i --prefix ./ && npm run dist && cd .. && cd client && npm i && npm run dist"
+    "setup-production": "npm i --prefix ./ && npm run build && cd .. && cd client && npm i && npm run build"
   },
   "keywords": [],
   "author": "",
