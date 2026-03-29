@@ -29,7 +29,7 @@ const WithdrawalLanding = () => {
             </li>
           </ul>
         </div>
-        <Link to='/account/admin/withdrawals/contributions/open'>
+        {/* <Link to='/account/admin/withdrawals/contributions/open'>
           <Card
             cardDesc='closed withdrawals'
             balance={30_000}
@@ -42,14 +42,14 @@ const WithdrawalLanding = () => {
             balance={30_000}
             icon={<FaLock />}
           />
-        </Link>
+        </Link> */}
       </div>
-      <Chart
+      {/* <Chart
         data={withdrawalData}
         xAxisName='name'
         dataKeys={['amount']}
         barColors={['#00b6d4']}
-      />
+      /> */}
     </>
   );
 };
