@@ -96,7 +96,7 @@ const ContributionOpenWithdrawals = () => {
                     key={withdrawal?._id}
                     className='divide-y divide-gray-200 bg-white dark:bg-slate-500 border-b-1 border-gray-200'
                   >
-                    <div className='grid grid-cols-1 md:grid-cols-7 px-6 py-5 md:py-4 items-center hover:bg-gray-50 transition-colors font-poppins *:pl-2 *:text-[13px]'>
+                    <div className='grid grid-cols-1 md:grid-cols-7 px-6 py-5 md:py-4 items-center font-poppins *:pl-2 *:text-[13px]'>
                       <div className='text-sm font-medium text-gray-900 dark:text-gray-200 mb-1 md:mb-0 capitalize'>
                         {withdrawal?.contribution}
                       </div>
