@@ -2,6 +2,7 @@ import { Form, Link, useActionData, useNavigation } from 'react-router-dom';
 import Button from '../UI/Button';
 import Title from '../UI/Title';
 import FormError from '../UI/FormError';
+import BackBtn from '../UI/BackBtn';
 
 const CreateGroupForm = () => {
   const { state } = useNavigation();
@@ -11,6 +12,7 @@ const CreateGroupForm = () => {
     <div className='w-full lg:w-4/5 lg:mx-auto bg-gray-100 dark:bg-slate-800 p-2.5 lg:p-4 rounded-lg'>
       {/* Form title */}
       <Title title='new contribution' />
+      <BackBtn url='/account/manage-group' />
       <Form method='post' id='contribution'>
         {error && <FormError message={error?.message} />}
         {/* Group name input */}
