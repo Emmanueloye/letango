@@ -1,14 +1,14 @@
-import { FaLock } from 'react-icons/fa';
-import Card from '../../../components/UI/Card';
+// import { FaLock } from 'react-icons/fa';
+// import Card from '../../../components/UI/Card';
 import { Link } from 'react-router-dom';
-import Chart from '../../../components/DashboardComponents/Chart';
+// import Chart from '../../../components/DashboardComponents/Chart';
 
 // Temp data
-const withdrawalData = [
-  { name: 'Jan', amount: 20000 },
-  { name: 'Feb', amount: 20000 },
-  { name: 'Mar', amount: 20000 },
-];
+// const withdrawalData = [
+//   { name: 'Jan', amount: 20000 },
+//   { name: 'Feb', amount: 20000 },
+//   { name: 'Mar', amount: 20000 },
+// ];
 
 const WithdrawalLanding = () => {
   return (
