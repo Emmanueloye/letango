@@ -45,7 +45,7 @@ class Email {
     // At build time, view will not be in build/dist folder, so the path is pointed to the view folder to pick up templates.
     const filePath =
       process.env.NODE_ENV === 'production'
-        ? path.resolve(__dirname, `../../src/view/${template}.ejs`)
+        ? path.resolve(__dirname, `../src/view/${template}.ejs`)
         : path.resolve(__dirname, `../view/${template}.ejs`);
 
     ejs.renderFile(filePath, { ...data }, (err, result) => {
@@ -81,7 +81,7 @@ class Email {
     await this.send(
       'resetPassword',
       'Password Reset Link - Expires in 15 minutes.',
-      data
+      data,
     );
   }
 }
