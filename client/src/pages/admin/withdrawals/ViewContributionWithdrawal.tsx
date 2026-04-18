@@ -9,6 +9,7 @@ import { formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useState } from 'react';
+import RejectBox from '../../../components/UI/RejectBox';
 
 const ViewContributionWithdrawal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -74,12 +75,17 @@ const ViewContributionWithdrawal = () => {
               {isLoading ? 'Processing...' : 'Process withdrawal'}
             </button>
 
-            <button className='bg-green-500 hover:bg-green-400 px-3 py-2 rounded-md capitalize text-slate-200 font-600 cursor-pointer disabled:bg-gray-400 mb-3'>
+            <button
+              popoverTarget='rejectBox'
+              className='bg-green-500 hover:bg-green-400 px-3 py-2 rounded-md capitalize text-slate-200 font-600 cursor-pointer disabled:bg-gray-400 mb-3'
+            >
               Reject withdrawal
             </button>
           </>
         )}
       </div>
+
+      <RejectBox />
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
         <div className='w-full mb-4 lg:mb-0'>

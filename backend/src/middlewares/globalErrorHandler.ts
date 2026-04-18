@@ -14,6 +14,7 @@ const sendProdError = (res: Response, err: any) => {
       .json({ success: false, status: err.status, message: err.message });
   } else {
     console.log('Error 🔥🔥🔥', err.message);
+
     console.log(err?.stack);
 
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
