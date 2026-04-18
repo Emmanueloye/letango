@@ -47,7 +47,7 @@ class Email {
     // `../../src/view/${template}.ejs
     const filePath =
       process.env.NODE_ENV === 'production'
-        ? path.resolve(__dirname, `../../src/view/${template}.ejs`)
+        ? path.resolve(__dirname, `../../../src/view/${template}.ejs`)
         : path.resolve(__dirname, `../view/${template}.ejs`);
 
     ejs.renderFile(filePath, { ...data }, (err, result) => {
