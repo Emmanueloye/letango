@@ -44,33 +44,27 @@ class Email {
   private async send(template: string, subject: string, data: any) {
     // At build time, view will not be in build/dist folder, so the path is pointed to the view folder to pick up templates.
 
-    // `../../src/view/${template}.ejs
-    const filePath =
-      process.env.NODE_ENV === 'production'
-        ? path.resolve(__dirname, `../../src/view/${template}.ejs`)
-        : path.resolve(__dirname, `../view/${template}.ejs`);
+    // path.resolve(__dirname, `../../src/view/${template}.ejs`);
+    const filePath = path.resolve(__dirname, `../view/${template}.ejs`);
 
-    ejs.renderFile(filePath, { ...data }, (err, result) => {
-      if (err) {
-        console.log(err);
+    try {
+      const html = (await ejs.renderFile(filePath, { ...data })) as string;
+      const mailOptions = {
+        from:
+          process.env.NODE_ENV === 'production'
+            ? process.env.EMAIL_SENDER_PROD
+            : process.env.EMAIL_SENDER_DEV,
+        to: data.email,
+        subject,
+        html,
+        text: convert(html as string),
+      };
 
-        throw err;
-      } else {
-        const mailOptions = {
-          from:
-            process.env.NODE_ENV === 'production'
-              ? process.env.EMAIL_SENDER_PROD
-              : process.env.EMAIL_SENDER_DEV,
-          to: data.email,
-          subject,
-          html: result,
-          text: convert(result),
-        };
-
-        // Send the email.
-        return this.emailTransporter().sendMail(mailOptions);
-      }
-    });
+      await this.emailTransporter().sendMail(mailOptions);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      throw error;
+    }
   }
   /**
    * Send email verification link to user.
