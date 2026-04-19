@@ -15,23 +15,23 @@ class Email {
    * @returns nodemailer email transporter for sending email
    */
   private emailTransporter() {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'production') {
       return nodemailer.createTransport({
-        host: process.env.MAILTRAP_HOST,
-        port: Number(process.env.MAILTRAP_PORT),
+        host: process.env.BREVO_HOST,
+        port: Number(process.env.BREVO_PORT),
         auth: {
-          user: process.env.MAILTRAP_USER,
-          pass: process.env.MAILTRAP_PASS,
+          user: process.env.BREVO_USER,
+          pass: process.env.BREVO_PASS,
         },
       });
     }
 
     return nodemailer.createTransport({
-      host: process.env.BREVO_HOST,
-      port: Number(process.env.BREVO_PORT),
+      host: process.env.MAILTRAP_HOST,
+      port: Number(process.env.MAILTRAP_PORT),
       auth: {
-        user: process.env.BREVO_USER,
-        pass: process.env.BREVO_PASS,
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS,
       },
     });
   }
