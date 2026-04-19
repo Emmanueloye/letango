@@ -60,7 +60,8 @@ class Email {
         text: convert(html as string),
       };
 
-      await this.emailTransporter().sendMail(mailOptions);
+      const info = await this.emailTransporter().sendMail(mailOptions);
+      console.log('EMAIL SENT:', info);
     } catch (error) {
       console.error('Error sending email:', error);
       throw error;
