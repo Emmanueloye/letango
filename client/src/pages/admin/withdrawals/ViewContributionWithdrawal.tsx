@@ -1,19 +1,22 @@
 /* eslint-disable react-refresh/only-export-components */
-import { LoaderFunctionArgs, redirect, useParams } from 'react-router-dom';
+import { LoaderFunctionArgs, useNavigate, useParams } from 'react-router-dom';
 import LinkBtn from '../../../components/UI/LinkBtn';
 import Title from '../../../components/UI/Title';
 import { customFetch, queryClient } from '../../../helperFunc.ts/apiRequest';
 import { fetchData } from '../../../helperFunc.ts/contributionsRequest';
 import { useQuery } from '@tanstack/react-query';
-import { formatNumber } from '../../../helperFunc.ts/utilsFunc';
+import { formatDate, formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RejectBox from '../../../components/UI/RejectBox';
 
 const ViewContributionWithdrawal = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [path, setPath] = useState('');
   const { withdrawalId } = useParams();
+  const navigate = useNavigate();
 
   const { data } = useQuery({
     queryKey: ['transaction', withdrawalId],
@@ -21,37 +24,46 @@ const ViewContributionWithdrawal = () => {
       fetchData(`/contribution-transactions/admin/${withdrawalId}`),
   });
 
-  // e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   const handleWithdrawalApproval = async () => {
-    try {
-      setIsLoading(true);
-      const dataInput = {
-        withdrawalStatus: 'processed',
-        withdrawalId: data?.withdrawal?.withdrawalId,
-      };
-      await customFetch.patch(
-        `/contribution-transactions/admin/process`,
-        dataInput,
-      );
+    const proceed = window.confirm(
+      'Are you sure you want to process this withdrawal?',
+    );
 
-      queryClient.invalidateQueries({ queryKey: ['transaction'] });
-      toast.success('Withdrawal has been processed and paid.');
-      return redirect('/account/admin/withdrawals/contributions/open');
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error?.response?.data?.message);
+    if (proceed) {
+      try {
+        setIsLoading(true);
+        const dataInput = {
+          withdrawalStatus: 'processed',
+          withdrawalId: data?.withdrawal?.withdrawalId,
+        };
+        await customFetch.patch(
+          `/contribution-transactions/admin/process`,
+          dataInput,
+        );
+
+        queryClient.invalidateQueries({ queryKey: ['transaction'] });
+        toast.success('Withdrawal has been processed.');
+        navigate('/account/admin/withdrawals/contributions/open');
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error?.response?.data?.message);
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  console.log(data?.withdrawal?.withdrawalStatus);
-
-  const status =
-    data?.withdrawalStatus !== '' && data?.withdrawalStatus === 'pending'
-      ? 'open'
-      : 'closed';
+  useEffect(() => {
+    if (!data?.withdrawal?.withdrawalStatus) return;
+    if (data?.withdrawal?.withdrawalStatus === 'pending') {
+      setPath('open');
+    } else if (data?.withdrawal?.withdrawalStatus === 'processed') {
+      setPath('closed');
+    } else if (data?.withdrawal?.withdrawalStatus === 'reject') {
+      setPath('rejected');
+    }
+  }, [data?.withdrawal?.withdrawalStatus]);
 
   return (
     <section>
@@ -59,7 +71,7 @@ const ViewContributionWithdrawal = () => {
       <div className='flex justify-end mb-2'>
         <LinkBtn
           btnText='back'
-          url={`/account/admin/withdrawals/contributions/${status}`}
+          url={`/account/admin/withdrawals/contributions/${path}`}
         />
       </div>
       {/* Title */}
@@ -76,6 +88,7 @@ const ViewContributionWithdrawal = () => {
             </button>
 
             <button
+              onClick={() => setOpen(true)}
               popoverTarget='rejectBox'
               className='bg-green-500 hover:bg-green-400 px-3 py-2 rounded-md capitalize text-slate-200 font-600 cursor-pointer disabled:bg-gray-400 mb-3'
             >
@@ -85,7 +98,16 @@ const ViewContributionWithdrawal = () => {
         )}
       </div>
 
-      <RejectBox />
+      {open && (
+        <RejectBox
+          setOpen={setOpen}
+          withdrawalId={data?.withdrawal?.withdrawalId as string}
+        />
+      )}
+
+      <div className='capitalize text-center underline mb-3'>
+        Withdrawal status: {data?.withdrawal?.withdrawalStatus}
+      </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-5'>
         <div className='w-full mb-4 lg:mb-0'>
@@ -118,14 +140,14 @@ const ViewContributionWithdrawal = () => {
         </div>
 
         <div className='w-full mb-4 lg:mb-0'>
-          <span className='label'>Withdraw To</span>
+          <span className='label'>Withdraw Amount</span>
           <span className='divInput capitalize font-poppins'>
             {formatNumber(data?.withdrawal?.amount)}
           </span>
         </div>
 
         <div className='w-full mb-4 lg:mb-0'>
-          <span className='label'>Withdraw To</span>
+          <span className='label'>Charge</span>
           <span className='divInput capitalize font-poppins'>
             {formatNumber(data?.withdrawal?.withdrawalCharge)}
           </span>
@@ -155,9 +177,49 @@ const ViewContributionWithdrawal = () => {
         <div className='w-full mb-4 lg:mb-0'>
           <span className='label'>withdrawal date</span>
           <span className='divInput capitalize'>
-            {data?.withdrawal?.paidAt.split('T')[0]}
+            {data?.withdrawal?.paidAt
+              ? formatDate(new Date(data?.withdrawal?.paidAt as string))
+              : 'N/A'}
           </span>
         </div>
+
+        {(data?.withdrawal?.withdrawalStatus === 'processed' ||
+          data?.withdrawal?.withdrawalStatus === 'reject') && (
+          <>
+            <div className='w-full mb-4 lg:mb-0'>
+              <span className='label'>
+                {data?.withdrawal.withdrawalStatus} By
+              </span>
+              <span className='divInput capitalize'>
+                {data?.withdrawal?.approvedOrRejectedBy?.surname}{' '}
+                <span>
+                  {' '}
+                  {data?.withdrawal?.approvedOrRejectedBy?.otherNames}
+                </span>
+              </span>
+            </div>
+
+            {data?.withdrawal?.updatedAt && (
+              <div className='w-full mb-4 lg:mb-0'>
+                <span className='label'>
+                  {data?.withdrawal.withdrawalStatus} Date
+                </span>
+                <span className='divInput capitalize'>
+                  {formatDate(new Date(data?.withdrawal?.updatedAt as string))}
+                </span>
+              </div>
+            )}
+          </>
+        )}
+
+        {data?.withdrawal?.withdrawalStatus === 'reject' && (
+          <div className='w-full mb-4 lg:mb-0'>
+            <span className='label'>Rejection Reason</span>
+            <span className='divInput capitalize'>
+              {data?.withdrawal?.withdrawalRejectionReason}
+            </span>
+          </div>
+        )}
       </div>
     </section>
   );

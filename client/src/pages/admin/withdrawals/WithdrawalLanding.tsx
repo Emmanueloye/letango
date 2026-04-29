@@ -22,9 +22,14 @@ const WithdrawalLanding = () => {
                 Open withdrawals
               </Link>
             </li>
-            <li className='ml-3 text-sm'>
+            <li className='ml-3 text-sm mb-2'>
               <Link to='/account/admin/withdrawals/contributions/closed'>
                 Processed withdrawals
+              </Link>
+            </li>
+            <li className='ml-3 text-sm mb-2'>
+              <Link to='/account/admin/withdrawals/contributions/rejected'>
+                Rejected withdrawals
               </Link>
             </li>
           </ul>

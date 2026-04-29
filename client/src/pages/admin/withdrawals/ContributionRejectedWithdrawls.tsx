@@ -2,7 +2,7 @@
 import { Link, LoaderFunctionArgs, useSearchParams } from 'react-router-dom';
 import LinkBtn from '../../../components/UI/LinkBtn';
 import Title from '../../../components/UI/Title';
-import { FaEye } from 'react-icons/fa';
+import { FaArrowDown, FaArrowUp, FaEye } from 'react-icons/fa';
 import { extractParams, queryClient } from '../../../helperFunc.ts/apiRequest';
 import { fetchData } from '../../../helperFunc.ts/contributionsRequest';
 import { useQuery } from '@tanstack/react-query';
@@ -19,7 +19,7 @@ import Empty from '../../../components/UI/Empty';
 import { ContributionTransaction } from '../../../dtos/contributionDto';
 import { formatDate, formatNumber } from '../../../helperFunc.ts/utilsFunc';
 
-const ContributionClosedWithdrawals = () => {
+const ContributionRejectedWithdrawls = () => {
   const [searchParams] = useSearchParams();
   const { page, limit } = Object.fromEntries(searchParams);
 
@@ -28,10 +28,10 @@ const ContributionClosedWithdrawals = () => {
   const debounceValue = useDebounce(searchValue, 400);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['close-withdrawal', page ?? PAGENUMBER, limit ?? PAGELIMIT],
+    queryKey: ['reject-withdrawal', page ?? PAGENUMBER, limit ?? PAGELIMIT],
     queryFn: () =>
       fetchData(
-        `/contribution-transactions/admin?withdrawalStatus=processed&sort=-paidAt&page=${page || PAGENUMBER}&limit=${limit || PAGELIMIT}`,
+        `/contribution-transactions/admin?withdrawalStatus=reject&sort=-paidAt&page=${page || PAGENUMBER}&limit=${limit || PAGELIMIT}`,
       ),
   });
 
@@ -43,7 +43,7 @@ const ContributionClosedWithdrawals = () => {
     queryKey: ['contributions', searchField, searchValue],
     queryFn: () =>
       fetchData(
-        `/contribution-transactions/admin?withdrawalStatus=processed&search=${safeField}&value=${debounceValue}`,
+        `/contribution-transactions/admin?withdrawalStatus=reject&search=${safeField}&value=${debounceValue}`,
       ),
     enabled: debounceValue.trim() !== '',
   });
@@ -60,7 +60,7 @@ const ContributionClosedWithdrawals = () => {
         <LinkBtn btnText='back' url='/account/admin/withdrawals' />
       </div>
       {/* Title */}
-      <Title title='closed withdrawals' />
+      <Title title='Rejected withdrawals' />
 
       {/* Search functionality */}
       <SearchBox
@@ -166,6 +166,18 @@ const ContributionClosedWithdrawals = () => {
                             >
                               <FaEye className='cursor-pointer' title='View' />
                             </Link>
+
+                            <FaArrowDown
+                              className='cursor-pointer text-rose-600'
+                              title='Deactivate'
+                              id='deactivate'
+                            />
+
+                            <FaArrowUp
+                              className='cursor-pointer'
+                              title='Activate'
+                              id='activate'
+                            />
                           </div>
                         </span>
                         {/* Mobile and desktop */}
@@ -194,22 +206,22 @@ const ContributionClosedWithdrawals = () => {
         currentPage={data?.page?.currentPage}
         nextPage={data?.page?.nextPage}
         previousPage={data?.page?.previousPage}
-        baseLink='/account/admin/withdrawals/contributions/open'
+        baseLink='/account/admin/withdrawals/contributions/rejected'
       />
     </section>
   );
 };
 
-export default ContributionClosedWithdrawals;
+export default ContributionRejectedWithdrawls;
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { page, limit } = extractParams(request);
 
   return queryClient.ensureQueryData({
-    queryKey: ['close-withdrawal', page ?? PAGENUMBER, limit ?? PAGELIMIT],
+    queryKey: ['reject-withdrawal', page ?? PAGENUMBER, limit ?? PAGELIMIT],
     queryFn: () =>
       fetchData(
-        `/contribution-transactions/admin?withdrawalStatus=processed&sort=-paidAt&page=${page || PAGENUMBER}&limit=${limit || PAGELIMIT}`,
+        `/contribution-transactions/admin?withdrawalStatus=reject&sort=-paidAt&page=${page || PAGENUMBER}&limit=${limit || PAGELIMIT}`,
       ),
   });
 };

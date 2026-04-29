@@ -168,6 +168,18 @@ const SideBar = ({ user }: { user: User }) => {
               </NavLink>
             </li>
 
+            <li className='mb-2 p-1'>
+              <NavLink
+                to='/account/admin/settings'
+                className={({ isActive }) =>
+                  isActive ? 'block font-700 capitalize' : 'block capitalize'
+                }
+                onClick={() => dispatch(dashboardActions.closeSidebar())}
+              >
+                settings
+              </NavLink>
+            </li>
+
             {/* <li className='mb-2 p-1'>
               <NavLink
                 to='/account/admin/kyc-review'

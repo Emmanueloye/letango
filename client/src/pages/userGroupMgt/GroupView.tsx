@@ -61,8 +61,6 @@ const GroupView = () => {
     queryFn: () => fetchData(url),
   });
 
-  // console.log(data.transactions);
-
   const isAdmin = contribution?.admins?.includes(user._id);
 
   const handleCopy = async () => {

@@ -40,7 +40,7 @@ const contributionTransactionSchema = new Schema(
     accountName: String,
     withdrawalStatus: {
       type: String,
-      enum: ['pending', 'processed', 'reject'],
+      enum: ['pending', 'processed', 'reject', 'reversal'],
     },
     withdrawalId: String,
     withdrawalRejectionReason: String,
@@ -48,6 +48,7 @@ const contributionTransactionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
+    updatedAt: Date,
     // For withdrawal
     initiatedBy: {
       type: Schema.Types.ObjectId,
@@ -61,7 +62,9 @@ contributionTransactionSchema.pre(/^find/, function (this: any) {
   this.populate({
     path: 'contributedBy',
     select: 'surname otherNames',
-  }).populate({ path: 'initiatedBy', select: 'surname otherNames' });
+  })
+    .populate({ path: 'initiatedBy', select: 'surname otherNames' })
+    .populate({ path: 'approvedOrRejectedBy', select: 'surname otherNames' });
 });
 
 export default model('ContributionTransaction', contributionTransactionSchema);

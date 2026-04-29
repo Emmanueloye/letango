@@ -74,7 +74,10 @@ import ContributionOpenWithdrawals, {
 import ContributionClosedWithdrawals, {
   loader as contributionClosedWithdrawalLoader,
 } from './pages/admin/withdrawals/ContributionClosedWithdrawals';
-import ClosedWithdrawals from './pages/admin/withdrawals/ContributionClosedWithdrawals';
+import ContributionRejectedWithdrawls, {
+  loader as rejectedContribution,
+} from './pages/admin/withdrawals/ContributionRejectedWithdrawls';
+// import ClosedWithdrawals from './pages/admin/withdrawals/ContributionClosedWithdrawals';
 // import Statements from './pages/report/Statements';
 import EditUser, {
   loader as editUserLoader,
@@ -91,10 +94,14 @@ import ViewAdminGroup, {
   loader as viewAdminGroupLoader,
 } from './pages/admin/groupManager/ViewAdminGroup';
 import WithdrawalLanding from './pages/admin/withdrawals/WithdrawalLanding';
-import PendingWithdrawals from './pages/admin/withdrawals/PendingWithdrawals';
+// import PendingWithdrawals from './pages/admin/withdrawals/PendingWithdrawals';
 import KYCReview from './pages/admin/usersManager/KYCReview';
 import ReportUser from './pages/userGroupMgt/ReportUser';
 import ViewContributionWithdrawal from './pages/admin/withdrawals/ViewContributionWithdrawal';
+import Settings, {
+  loader as settingsLoader,
+  action as settingsAction,
+} from './pages/admin/settings/Settings';
 
 const router = createBrowserRouter([
   {
@@ -308,10 +315,20 @@ const router = createBrowserRouter([
                 loader: contributionClosedWithdrawalLoader,
               },
 
-              { path: 'pending', element: <PendingWithdrawals /> },
+              {
+                path: 'contributions/rejected',
+                element: <ContributionRejectedWithdrawls />,
+                loader: rejectedContribution,
+              },
             ],
           },
-          { path: 'closed-withdrawals', element: <ClosedWithdrawals /> },
+          // { path: 'closed-withdrawals', element: <ClosedWithdrawals /> },
+          {
+            path: 'settings',
+            element: <Settings />,
+            loader: settingsLoader,
+            action: settingsAction,
+          },
           { path: 'kyc-review', element: <KYCReview /> },
           // { path: 'statement', element: <Statements /> },
         ],

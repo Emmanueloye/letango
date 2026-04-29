@@ -66,7 +66,8 @@ export const contributionWithdrawal = async (req: Request, res: Response) => {
   const unprocessedWithdrawals = await ContributionTransaction.find({
     groupId,
     amount: { $lt: 0 },
-    isWithdrawalProcessed: false,
+
+    withdrawalStatus: 'pending',
   });
 
   // Sum up the unprocessed withdrawals
@@ -78,7 +79,7 @@ export const contributionWithdrawal = async (req: Request, res: Response) => {
   );
 
   // Calculate contribution effective balance
-  const effectiveBalance = contribution.balance - sumOfUnprocessedWithdrawals;
+  const effectiveBalance = contribution.balance + sumOfUnprocessedWithdrawals;
 
   // Check if the effective balance can accommodate the incoming withdrawal.
   if (effectiveBalance < amount) {
@@ -220,6 +221,7 @@ export const getWithdrawal = async (req: Request, res: Response) => {
 
 export const processWithdrawal = async (req: Request, res: Response) => {
   const { withdrawalId, rejectionReason, withdrawalStatus } = req.body;
+  console.log(withdrawalId);
 
   if (!withdrawalId) {
     throw new AppError.BadRequest(
@@ -252,15 +254,19 @@ export const processWithdrawal = async (req: Request, res: Response) => {
   }
   const session = await startSession();
 
-  try {
-    await session.withTransaction(async () => {
+  await session.withTransaction(async () => {
+    if (withdrawalStatus === 'processed') {
       withdrawal.withdrawalStatus = withdrawalStatus;
-      withdrawal.withdrawalRejectionReason = rejectionReason;
       withdrawal.approvedOrRejectedBy = req.user._id;
+      withdrawal.updatedAt = new Date(Date.now());
       await withdrawal.save({ session });
 
       contribution.balance += withdrawal?.amount ?? 0;
       await contribution.save({ session });
+
+      withdrawal.amount =
+        (withdrawal.amount ?? 0) + (withdrawal.withdrawalCharge ?? 0);
+      await withdrawal.save({ session });
 
       await Revenue.create(
         [
@@ -273,31 +279,73 @@ export const processWithdrawal = async (req: Request, res: Response) => {
         ],
         { session },
       );
-    });
 
-    await ContributionTransaction.create(
-      [
-        {
-          groupRef: withdrawal?.groupRef,
-          groupId: withdrawal?.groupId,
-          amount: (withdrawal?.withdrawalCharge ?? 0) * -1,
-          contribution: withdrawal?.contribution,
-          description: `withdrawal charge on payout to ${withdrawal?.contributorName}`,
-          contributedBy: withdrawal?.contributedBy,
-          paidAt: Date.now(),
-          transactionType: 'Charge',
-        },
-      ],
-      { session },
-    );
+      await ContributionTransaction.create(
+        [
+          {
+            groupRef: withdrawal?.groupRef,
+            groupId: withdrawal?.groupId,
+            amount: (withdrawal?.withdrawalCharge ?? 0) * -1,
+            contribution: withdrawal?.contribution,
+            description: `withdrawal charge on payout to ${withdrawal?.contributorName}`,
+            contributedBy: withdrawal?.contributedBy,
+            paidAt: Date.now(),
+            transactionType: 'Charge',
+          },
+        ],
+        { session },
+      );
 
-    const message = rejectionReason
-      ? 'Withdrawal has been rejected'
-      : 'Withdrawal has been processed and paid.';
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: 'Withdrawal has been processed.',
+      });
+      return;
+    }
 
-    res.status(StatusCodes.OK).json({ success: true, message });
-  } catch (error) {
-    await session.abortTransaction();
-    res.status(StatusCodes.BADREQUEST).json({ success: false });
-  }
+    if (withdrawalStatus === 'reject') {
+      if (!rejectionReason) {
+        throw new AppError.BadRequest(
+          'Please provide a reason for rejecting this withdrawal.',
+        );
+      }
+
+      withdrawal.withdrawalStatus = withdrawalStatus;
+      withdrawal.withdrawalRejectionReason = rejectionReason;
+      withdrawal.approvedOrRejectedBy = req.user._id;
+      withdrawal.updatedAt = new Date(Date.now());
+      await withdrawal.save({ session });
+
+      // Create a reversal.
+
+      await ContributionTransaction.create(
+        [
+          {
+            groupRef: withdrawal?.groupRef,
+            groupId: withdrawal?.groupId,
+            amount: (withdrawal?.amount ?? 0) * -1,
+            contribution: withdrawal?.contribution,
+            description: `Reversal of ${withdrawal?.description} due to rejection.`,
+            contributedBy: withdrawal?.contributedBy,
+            paidAt: Date.now(),
+            transactionType: 'withdrawal reversal',
+            withdrawalStatus: 'reversal',
+          },
+        ],
+        { session },
+      );
+
+      console.log(withdrawal?.amount);
+
+      // Want to update the effective balance to make the fund available for future transaction.
+      contribution.effectiveBalance += (withdrawal?.amount ?? 0) * -1;
+      await contribution.save({ session });
+
+      res.status(StatusCodes.OK).json({
+        success: true,
+        message: 'Withdrawal has been rejected.',
+      });
+      return;
+    }
+  });
 };
