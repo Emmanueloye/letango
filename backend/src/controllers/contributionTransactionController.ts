@@ -275,6 +275,7 @@ export const processWithdrawal = async (req: Request, res: Response) => {
             revenueType: 'contribution',
             amount: withdrawal?.withdrawalCharge ?? 0,
             transactionId: withdrawalId,
+            withdrawalId: withdrawal._id,
           },
         ],
         { session },
@@ -334,8 +335,6 @@ export const processWithdrawal = async (req: Request, res: Response) => {
         ],
         { session },
       );
-
-      console.log(withdrawal?.amount);
 
       // Want to update the effective balance to make the fund available for future transaction.
       contribution.effectiveBalance += (withdrawal?.amount ?? 0) * -1;

@@ -30,7 +30,12 @@ const ManageGroup = () => {
   const contributionUrl = `/contributions?page=${page}&limit=${limit}`;
 
   const { data } = useQuery({
-    queryKey: ['contributions', page ?? PAGENUMBER, limit ?? PAGELIMIT],
+    queryKey: [
+      'contributions',
+      'manageGroup',
+      page ?? PAGENUMBER,
+      limit ?? PAGELIMIT,
+    ],
     queryFn: () => fetchContributions(contributionUrl),
   });
 
@@ -116,7 +121,12 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const contributionUrl = `/contributions?page=${page}&limit=${limit}`;
 
   return queryClient.ensureQueryData({
-    queryKey: ['contributions', page ?? PAGENUMBER, limit ?? PAGELIMIT],
+    queryKey: [
+      'contributions',
+      'manageGroup',
+      page ?? PAGENUMBER,
+      limit ?? PAGELIMIT,
+    ],
     queryFn: () => fetchContributions(contributionUrl),
   });
 };

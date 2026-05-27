@@ -37,7 +37,9 @@ import PersonalWallet from './pages/wallet/PersonalWallet';
 // import WalletTransaction from './pages/wallet/WalletTransaction';
 // import TransactionFlow from './pages/wallet/TransactionFlow';
 import GroupLayout from './layouts/GroupLayout';
-import GroupView from './pages/userGroupMgt/GroupView';
+import GroupView, {
+  loader as groupViewLoader,
+} from './pages/userGroupMgt/GroupView';
 import CreateGroupRules from './pages/userGroupMgt/CreateGroupRules';
 import ViewGroupRules from './pages/userGroupMgt/ViewGroupRules';
 import BeneficiaryDetails from './pages/userGroupMgt/BeneficiaryDetails';
@@ -102,6 +104,8 @@ import Settings, {
   loader as settingsLoader,
   action as settingsAction,
 } from './pages/admin/settings/Settings';
+import Error from './pages/Error';
+import NotFound from './pages/NotFound';
 
 const router = createBrowserRouter([
   {
@@ -135,7 +139,9 @@ const router = createBrowserRouter([
   {
     path: '/account',
     element: <DashBoardLayout />,
+    errorElement: <Error />,
     loader: dashboardLoader,
+    id: 'user',
     children: [
       { index: true, element: <Dashboard /> },
       {
@@ -190,10 +196,9 @@ const router = createBrowserRouter([
           },
           {
             path: 'view/:groupId',
-
             element: <GroupLayout />,
             children: [
-              { index: true, element: <GroupView /> },
+              { index: true, element: <GroupView />, loader: groupViewLoader },
               { path: 'manage-rules', element: <CreateGroupRules /> },
               { path: 'view-rules', element: <ViewGroupRules /> },
               { path: 'beneficiaries', element: <BeneficiaryDetails /> },
@@ -209,7 +214,6 @@ const router = createBrowserRouter([
               },
               {
                 path: 'members',
-
                 children: [
                   {
                     index: true,
@@ -332,6 +336,11 @@ const router = createBrowserRouter([
           { path: 'kyc-review', element: <KYCReview /> },
           // { path: 'statement', element: <Statements /> },
         ],
+      },
+      // For not fund
+      {
+        path: '*',
+        element: <NotFound />, // or a NotFound component
       },
     ],
   },

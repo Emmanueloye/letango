@@ -7,8 +7,18 @@ export const fetchContributions = async (url: string) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw Response.json(error?.response?.data);
+      throw new Response(JSON.stringify(error.response?.data), {
+        status: error.response?.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
+
+    throw error;
+    // if (axios.isAxiosError(error)) {
+    //   throw Response.json(error?.response?.data);
+    // }
   }
 };
 
@@ -19,8 +29,18 @@ export const fetchContribution = async (groupId: string) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw Response.json(error?.response?.data);
+      throw new Response(JSON.stringify(error.response?.data), {
+        status: error.response?.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
+
+    throw error;
+    // if (axios.isAxiosError(error)) {
+    //   throw Response.json(error?.response?.data);
+    // }
   }
 };
 
@@ -32,8 +52,19 @@ export const fetchPayment = async (reference: string) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw Response.json(error?.response?.data);
+      throw new Response(JSON.stringify(error.response?.data), {
+        status: error.response?.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
+
+    throw error;
+
+    // if (axios.isAxiosError(error)) {
+    //   throw Response.json(error?.response?.data);
+    // }
   }
 };
 
@@ -55,8 +86,19 @@ export const fetchData = async (url: string) => {
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw Response.json(error?.response?.data);
+      throw new Response(JSON.stringify(error.response?.data), {
+        status: error.response?.status || 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
+
+    throw error;
+
+    // if (axios.isAxiosError(error)) {
+    //   throw Response.json(error?.response?.data);
+    // }
   }
 };
 

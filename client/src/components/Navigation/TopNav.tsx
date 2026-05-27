@@ -39,7 +39,7 @@ const TopNav = ({ user }: { user: User }) => {
 
   return (
     <nav
-      className={` ml-0 ${showNavLg} h-[66px] border-b-2 border-primary-500 dark:border-amber-500 transition-all duration-700 ease-in-out px-3 sticky top-0 left-0 bg-gray-200 dark:bg-slate-800 z-6 flex items-center`}
+      className={` ml-0 ${showNavLg} h-[62px] border-b-2 border-primary-500 dark:border-amber-500 transition-all duration-700 ease-in-out px-3 sticky top-0 left-0 bg-gray-200 dark:bg-slate-800 z-6 flex items-center`}
     >
       <div className='container mx-auto py-2 px-4 flex justify-between items-center'>
         {/* Sidebar toggle menu */}

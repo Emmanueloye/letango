@@ -118,12 +118,16 @@ const ContributionClosedWithdrawals = () => {
                       <div className='flex justify-between md:block text-sm mb-1 md:mb-0'>
                         {/* For mobile view */}
                         <span className='md:hidden font-semibold text-gray-400 dark:text-gray-200 uppercase text-xs'>
-                          {formatNumber(withdrawal.amount)}
+                          {formatNumber(
+                            withdrawal.amount - withdrawal?.withdrawalCharge,
+                          )}
                         </span>
                         {/* Mobile and desktop */}
                         <span className='hidden text-gray-700 dark:text-gray-200 md:text-right md:block font-poppins'>
                           {/* DATE DESKTOP */}
-                          {formatNumber(withdrawal.amount)}
+                          {formatNumber(
+                            withdrawal.amount - withdrawal?.withdrawalCharge,
+                          )}
                         </span>
                       </div>
 
@@ -145,14 +149,18 @@ const ContributionClosedWithdrawals = () => {
                         <span className='md:hidden font-semibold text-gray-400 dark:text-gray-200 capitalize text-xs'>
                           {/* Status MOBILE */}
                           {formatNumber(
-                            withdrawal?.amount + withdrawal?.withdrawalCharge,
+                            withdrawal?.amount -
+                              withdrawal?.withdrawalCharge +
+                              withdrawal?.withdrawalCharge,
                           )}
                         </span>
                         {/* Mobile and desktop */}
                         <span className='hidden text-gray-700 dark:text-gray-200 md:text-right md:block font-poppins capitalize'>
                           {/* status DESKTOP */}
                           {formatNumber(
-                            withdrawal?.amount + withdrawal?.withdrawalCharge,
+                            withdrawal?.amount -
+                              withdrawal?.withdrawalCharge +
+                              withdrawal?.withdrawalCharge,
                           )}
                         </span>
                       </div>

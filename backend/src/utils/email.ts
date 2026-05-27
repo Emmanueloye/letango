@@ -49,6 +49,8 @@ class Email {
 
     try {
       const html = (await ejs.renderFile(filePath, { ...data })) as string;
+
+      console.log('filepath: ', filePath);
       const mailOptions = {
         from:
           process.env.NODE_ENV === 'production'

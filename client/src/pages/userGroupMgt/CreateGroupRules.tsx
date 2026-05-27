@@ -1,30 +1,51 @@
-import { Form } from 'react-router-dom';
-import Button from '../../components/UI/Button';
+import { useParams } from 'react-router-dom';
 import Title from '../../components/UI/Title';
-import LinkBtn from '../../components/UI/LinkBtn';
+import BackBtn from '../../components/UI/BackBtn';
+
+import { CKEditor, useCKEditorCloud } from '@ckeditor/ckeditor5-react';
 
 const CreateGroupRules = () => {
+  const params = useParams();
+
+  const cloud = useCKEditorCloud({
+    version: '48.1.1',
+    translations: ['es'],
+  });
+
+  if (cloud.status === 'error') {
+    return <div>Error!</div>;
+  }
+
+  if (cloud.status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  const { ClassicEditor, Essentials, Bold, Italic, Paragraph } = cloud.CKEditor;
+
   return (
     <div className='w-full lg:w-4/5 lg:mx-auto bg-gray-100 dark:bg-slate-800 p-2.5 lg:p-4 rounded-lg'>
-      <div>
-        <LinkBtn btnText='Back' url='/account/manage-group/view/1' />
-      </div>
+      <BackBtn url={`/account/manage-group/view/${params.groupId}`} />
+
       {/* Form title */}
       <Title title='manage group rules' />
-      <Form id='manageRules'>
-        {/* Group name input */}
-        <div className='mb-6'>
-          <label
-            htmlFor='groupName'
-            className={`after:text-red-500 after:content-['*'] after:font-700`}
-          >
-            group Rules
-          </label>
-          <textarea name='rules' id='rules' cols={10} rows={10}></textarea>
-        </div>
 
-        <Button btnText='save' btnType='submit' />
-      </Form>
+      <CKEditor
+        editor={ClassicEditor}
+        data={'<p>Hello world!</p>'}
+        config={{
+          licenseKey: '<YOUR_LICENSE_KEY>',
+          plugins: [Essentials, Paragraph, Bold, Italic],
+          toolbar: [
+            'undo',
+            'redo',
+            '|',
+            'bold',
+            'italic',
+            '|',
+            'formatPainter',
+          ],
+        }}
+      />
     </div>
   );
 };

@@ -10,6 +10,10 @@ const revenueSchema = new Schema({
   transactionId: {
     type: String,
   },
+  withdrawalId: {
+    type: Schema.Types.ObjectId,
+    ref: 'ContributionTransaction',
+  },
 });
 
 export default model('Revenue', revenueSchema);
