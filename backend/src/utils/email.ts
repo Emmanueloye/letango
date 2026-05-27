@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { convert } from 'html-to-text';
 import ejs from 'ejs';
 import path from 'path';
+import fs from 'fs';
 // import '../../src/view/verficationEmail'
 // import '../view/verficationEmail'
 
@@ -10,6 +11,36 @@ import path from 'path';
  */
 class Email {
   constructor() {}
+
+  private getRequiredEnv(name: string) {
+    const value = process.env[name];
+    if (!value) {
+      throw new Error(`Missing required email environment variable: ${name}`);
+    }
+    return value;
+  }
+
+  private getTemplatePath(template: string) {
+    const possiblePaths = [
+      path.resolve(__dirname, `../view/${template}.ejs`),
+      path.resolve(process.cwd(), `src/view/${template}.ejs`),
+      path.resolve(process.cwd(), `build/view/${template}.ejs`),
+    ];
+
+    const filePath = possiblePaths.find((templatePath) =>
+      fs.existsSync(templatePath),
+    );
+
+    if (!filePath) {
+      throw new Error(
+        `Email template "${template}" not found. Checked: ${possiblePaths.join(
+          ', ',
+        )}`,
+      );
+    }
+
+    return filePath;
+  }
   /**
    * emailtransporter is a private method that creates email transporter depending if it is in production or development mode.
    * @returns nodemailer email transporter for sending email
@@ -17,21 +48,21 @@ class Email {
   private emailTransporter() {
     if (process.env.NODE_ENV === 'production') {
       return nodemailer.createTransport({
-        host: process.env.BREVO_HOST,
-        port: Number(process.env.BREVO_PORT),
+        host: this.getRequiredEnv('BREVO_HOST'),
+        port: Number(this.getRequiredEnv('BREVO_PORT')),
         auth: {
-          user: process.env.BREVO_USER,
-          pass: process.env.BREVO_PASS,
+          user: this.getRequiredEnv('BREVO_USER'),
+          pass: this.getRequiredEnv('BREVO_PASS'),
         },
       });
     }
 
     return nodemailer.createTransport({
-      host: process.env.MAILTRAP_HOST,
-      port: Number(process.env.MAILTRAP_PORT),
+      host: this.getRequiredEnv('MAILTRAP_HOST'),
+      port: Number(this.getRequiredEnv('MAILTRAP_PORT')),
       auth: {
-        user: process.env.MAILTRAP_USER,
-        pass: process.env.MAILTRAP_PASS,
+        user: this.getRequiredEnv('MAILTRAP_USER'),
+        pass: this.getRequiredEnv('MAILTRAP_PASS'),
       },
     });
   }
@@ -42,10 +73,7 @@ class Email {
    * @param data: object: key value pairs for the data that will be used in the email template specified.
    */
   private async send(template: string, subject: string, data: any) {
-    // At build time, view will not be in build/dist folder, so the path is pointed to the view folder to pick up templates.
-
-    // path.resolve(__dirname, `../../src/view/${template}.ejs`);
-    const filePath = path.resolve(__dirname, `../view/${template}.ejs`);
+    const filePath = this.getTemplatePath(template);
 
     try {
       const html = (await ejs.renderFile(filePath, { ...data })) as string;
@@ -54,8 +82,8 @@ class Email {
       const mailOptions = {
         from:
           process.env.NODE_ENV === 'production'
-            ? process.env.EMAIL_SENDER_PROD
-            : process.env.EMAIL_SENDER_DEV,
+            ? this.getRequiredEnv('EMAIL_SENDER_PROD')
+            : this.getRequiredEnv('EMAIL_SENDER_DEV'),
         to: data.email,
         subject,
         html,
