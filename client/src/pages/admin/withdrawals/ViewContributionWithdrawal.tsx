@@ -9,7 +9,7 @@ import { formatDate, formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import RejectBox from '../../../components/UI/ActionBox';
+import ActionBox from '../../../components/UI/ActionBox';
 
 const ViewContributionWithdrawal = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -99,9 +99,21 @@ const ViewContributionWithdrawal = () => {
       </div>
 
       {open && (
-        <RejectBox
+        <ActionBox
           setOpen={setOpen}
-          withdrawalId={data?.withdrawal?.withdrawalId as string}
+          title='Reason for rejection'
+          name='rejectionReason'
+          btnText={['rejecting...', 'reject']}
+          endpoint={`/contribution-transactions/admin/process`}
+          successMessage='Withdrawal rejected.'
+          onSuccess={() =>
+            navigate(`/account/admin/withdrawals/contributions/open`)
+          }
+          defaultPayload={{
+            withdrawalId: data?.withdrawal.withdrawalId,
+            withdrawalStatus: 'reject',
+          }}
+          invalidateKeys={[['transaction'], ['open-withdrawal']]}
         />
       )}
 
