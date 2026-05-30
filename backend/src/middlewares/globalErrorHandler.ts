@@ -9,14 +9,12 @@ const sendDevError = (res: Response, err: any) => {
 
 const sendProdError = (res: Response, err: any) => {
   if (err.isOperational) {
-    res
-      .status(err.statusCode)
-      .json({
-        success: false,
-        statusCode: err.statusCode,
-        status: err.status,
-        message: err.message,
-      });
+    res.status(err.statusCode).json({
+      success: false,
+      statusCode: err.statusCode,
+      status: err.status,
+      message: err.message,
+    });
   } else {
     console.log('Error 🔥🔥🔥', err.message);
 

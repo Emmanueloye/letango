@@ -1,5 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Link, LoaderFunctionArgs, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  LoaderFunctionArgs,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import Title from '../../../components/UI/Title';
 import { FaArrowDown, FaArrowUp, FaEdit, FaEye } from 'react-icons/fa';
 import {
@@ -22,9 +27,12 @@ import { toast } from 'react-toastify';
 import { useState } from 'react';
 import { useDebounce } from '../../../Actions/useDebounce';
 import SearchBox from '../../../components/UI/SearchBox';
+import ActionBox from '../../../components/UI/ActionBox';
 
 const GroupManager = () => {
   const [searchParams] = useSearchParams();
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { page, limit } = Object.fromEntries(searchParams);
 
@@ -66,11 +74,11 @@ const GroupManager = () => {
   ) => {
     const action = e.currentTarget.id;
 
-    if (action === 'deactivate') {
-      const data = { isActive: false };
-      await customFetch.patch(`/contributions/admin/${contributionId}`, data);
-      toast.success(`contribution status has been updated successfully.`);
-    }
+    // if (action === 'deactivate') {
+    //   const data = { isActive: false };
+    //   await customFetch.patch(`/contributions/admin/${contributionId}`, data);
+    //   toast.success(`contribution status has been updated successfully.`);
+    // }
 
     if (action === 'activate') {
       const data = { isActive: true };
@@ -170,14 +178,16 @@ const GroupManager = () => {
                                 />
                               </Link>
                               {contribution?.isActive ? (
-                                <FaArrowDown
-                                  className='cursor-pointer text-rose-600'
-                                  title='Deactivate'
-                                  id='deactivate'
-                                  onClick={(e) =>
-                                    handleUserStatus(e, contribution?.ref)
-                                  }
-                                />
+                                <button
+                                  popoverTarget='action'
+                                  onClick={() => setOpen(true)}
+                                >
+                                  <FaArrowDown
+                                    className='cursor-pointer text-rose-600'
+                                    title='Deactivate'
+                                    id='deactivate'
+                                  />
+                                </button>
                               ) : (
                                 <FaArrowUp
                                   className='cursor-pointer'
@@ -211,14 +221,16 @@ const GroupManager = () => {
                               </Link>
 
                               {contribution?.isActive ? (
-                                <FaArrowDown
-                                  className='cursor-pointer text-rose-600'
-                                  title='Deactivate'
-                                  id='deactivate'
-                                  onClick={(e) =>
-                                    handleUserStatus(e, contribution?.ref)
-                                  }
-                                />
+                                <button
+                                  popoverTarget='action'
+                                  onClick={() => setOpen(true)}
+                                >
+                                  <FaArrowDown
+                                    className='cursor-pointer text-rose-600'
+                                    title='Deactivate'
+                                    id='deactivate'
+                                  />
+                                </button>
                               ) : (
                                 <FaArrowUp
                                   className='cursor-pointer'
@@ -233,6 +245,22 @@ const GroupManager = () => {
                           </span>
                         </div>
                       </div>
+
+                      {open && (
+                        <ActionBox
+                          setOpen={setOpen}
+                          title='Reason for deactivation'
+                          name='deactivationReason'
+                          btnText={['deactivating...', 'deactivate']}
+                          endpoint={`/contributions/admin/${contribution?.ref}`}
+                          successMessage='Contribution deactivated.'
+                          onSuccess={() =>
+                            navigate(`/account/admin/contributions`)
+                          }
+                          defaultPayload={{ isActive: false }}
+                          invalidateKeys={[['contributions'], ['contribution']]}
+                        />
+                      )}
                     </div>
                   );
                 })}

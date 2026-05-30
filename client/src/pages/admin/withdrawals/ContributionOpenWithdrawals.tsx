@@ -1,5 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Link, LoaderFunctionArgs, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  LoaderFunctionArgs,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import LinkBtn from '../../../components/UI/LinkBtn';
 import Title from '../../../components/UI/Title';
 import { FaArrowDown, FaArrowUp, FaEye } from 'react-icons/fa';
@@ -24,12 +29,13 @@ import { ContributionTransaction } from '../../../dtos/contributionDto';
 import { formatDate, formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import RejectBox from '../../../components/UI/RejectBox';
+import ActionBox from '../../../components/UI/ActionBox';
 
 const ContributionOpenWithdrawals = () => {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { page, limit } = Object.fromEntries(searchParams);
 
@@ -225,7 +231,7 @@ const ContributionOpenWithdrawals = () => {
                                 />
                               )}
                               <button
-                                data-popover-target='rejectBox'
+                                data-popover-target='action'
                                 onClick={() => setOpen(true)}
                               >
                                 <FaArrowDown
@@ -264,7 +270,7 @@ const ContributionOpenWithdrawals = () => {
                               )}
 
                               <button
-                                popoverTarget='rejectBox'
+                                popoverTarget='action'
                                 onClick={() => setOpen(true)}
                               >
                                 <FaArrowDown
@@ -279,9 +285,26 @@ const ContributionOpenWithdrawals = () => {
                       </div>
 
                       {open && (
-                        <RejectBox
+                        <ActionBox
                           setOpen={setOpen}
-                          withdrawalId={withdrawal?.withdrawalId as string}
+                          title='Reason for rejection'
+                          name='rejectionReason'
+                          btnText={['rejecting...', 'reject']}
+                          endpoint={`/contribution-transactions/admin/process`}
+                          successMessage='Withdrawal rejected.'
+                          onSuccess={() =>
+                            navigate(
+                              `/account/admin/withdrawals/contributions/open`,
+                            )
+                          }
+                          defaultPayload={{
+                            withdrawalId: withdrawal.withdrawalId,
+                            withdrawalStatus: 'reject',
+                          }}
+                          invalidateKeys={[
+                            ['transaction'],
+                            ['open-withdrawal'],
+                          ]}
                         />
                       )}
                     </div>

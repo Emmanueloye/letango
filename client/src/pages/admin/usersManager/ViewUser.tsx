@@ -5,6 +5,7 @@ import Title from '../../../components/UI/Title';
 import { queryClient } from '../../../helperFunc.ts/apiRequest';
 import { fetchData } from '../../../helperFunc.ts/contributionsRequest';
 import { useQuery } from '@tanstack/react-query';
+import { formatDate } from '../../../helperFunc.ts/utilsFunc';
 
 const ViewUser = () => {
   const params = useParams();
@@ -74,9 +75,51 @@ const ViewUser = () => {
             autoComplete='off'
             disabled
             className='capitalize'
-            value={user?.isActive ? 'active' : 'inactive'}
+            defaultValue={user?.isActive ? 'active' : 'inactive'}
           />
         </div>
+
+        {user?.reason && (
+          <div className='w-full mb-4 lg:mb-0'>
+            <label htmlFor='userStatus'>last reason for deactivation</label>
+            <input
+              id='lastUpdateAt'
+              name='lastUpdateAt'
+              autoComplete='off'
+              disabled
+              className='capitalize'
+              defaultValue={formatDate(new Date(user?.lastUpdatedAt))}
+            />
+          </div>
+        )}
+
+        {user?.lastUpdatedAt && (
+          <div className='w-full mb-4 lg:mb-0'>
+            <label htmlFor='deactivate'>last updated At</label>
+            <input
+              id='deactivate'
+              name='deactivate'
+              autoComplete='off'
+              disabled
+              className='capitalize'
+              defaultValue={user?.reason}
+            />
+          </div>
+        )}
+
+        {user?.lastUpdatedBy && (
+          <div className='w-full mb-4 lg:mb-0'>
+            <label htmlFor='lastUpdatedBy'>last updatedBy</label>
+            <input
+              id='lastUpdatedBy'
+              name='lastUpdatedBy'
+              autoComplete='off'
+              disabled
+              className='capitalize'
+              defaultValue={`${user?.lastUpdatedBy?.surname} ${user?.lastUpdatedBy?.otherNames?.split(' ')[0]}`}
+            />
+          </div>
+        )}
       </div>
     </section>
   );

@@ -201,12 +201,19 @@ export const joinContribution = async (req: Request, res: Response) => {
 
 // Update contribution.
 export const updateContribution = async (req: Request, res: Response) => {
-  const { name, description, logo, logoId, isActive } = req.body;
+  console.log(req.body);
+
+  const { name, description, logo, logoId, isActive, deactivationReason } =
+    req.body;
+
+  if (isActive === false && !deactivationReason) {
+    throw new AppError.BadRequest('Reason for deactivation is required.');
+  }
   const contribution = await Contribution.findOneAndUpdate(
     {
       ref: req.params.ref,
     },
-    { name, description, logo, logoId, isActive },
+    { name, description, logo, logoId, isActive, deactivationReason },
     { new: true, runValidator: true },
   );
   res.status(StatusCodes.OK).json({ success: true, contribution });

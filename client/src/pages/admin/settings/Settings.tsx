@@ -7,10 +7,10 @@ import {
 } from '../../../helperFunc.ts/apiRequest';
 import { fetchData } from '../../../helperFunc.ts/contributionsRequest';
 import { ActionFunctionArgs, Form } from 'react-router-dom';
-import { formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import Title from '../../../components/UI/Title';
 import Button from '../../../components/UI/Button';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Settings = () => {
   const { data } = useQuery({
@@ -159,9 +159,7 @@ const Settings = () => {
               type='text'
               id='basicMemberFee'
               name='basicMemberFee'
-              defaultValue={formatNumber(
-                data?.groupSettings?.basicMembershipFee,
-              )}
+              defaultValue={data?.groupSettings?.basicMembershipFee}
               autoComplete='off'
               className='capitalize'
             />
@@ -194,9 +192,7 @@ const Settings = () => {
               type='text'
               id='premiumMembershipFee'
               name='premiumMembershipFee'
-              defaultValue={formatNumber(
-                data?.groupSettings?.premiumMembershipFee,
-              )}
+              defaultValue={data?.groupSettings?.premiumMembershipFee}
               autoComplete='off'
               className='capitalize'
             />
@@ -212,9 +208,7 @@ const Settings = () => {
               type='text'
               id='standardMemberLimit'
               name='standardMemberLimit'
-              defaultValue={formatNumber(
-                data?.groupSettings?.standardMemberLimit,
-              )}
+              defaultValue={data?.groupSettings?.standardMemberLimit}
               autoComplete='off'
               className='capitalize'
             />
@@ -230,9 +224,7 @@ const Settings = () => {
               type='text'
               id='standardMembershipFee'
               name='standardMembershipFee'
-              defaultValue={formatNumber(
-                data?.groupSettings?.standardMembershipFee,
-              )}
+              defaultValue={data?.groupSettings?.standardMembershipFee}
               autoComplete='off'
               className='capitalize'
             />
@@ -261,6 +253,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       `/group-settings/${formData.id}`,
       formData,
     );
+    toast.success('Group settings updated successfully');
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

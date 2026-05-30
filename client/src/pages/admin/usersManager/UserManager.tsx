@@ -7,7 +7,12 @@ import {
   queryClient,
 } from '../../../helperFunc.ts/apiRequest';
 import { fetchData } from '../../../helperFunc.ts/contributionsRequest';
-import { Link, LoaderFunctionArgs, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  LoaderFunctionArgs,
+  useNavigate,
+  useSearchParams,
+} from 'react-router-dom';
 import {
   ALLOWED_MEMBER_SEARCH_FIELDS,
   PAGELIMIT,
@@ -22,10 +27,13 @@ import { toast } from 'react-toastify';
 import SearchBox from '../../../components/UI/SearchBox';
 import { useState } from 'react';
 import { useDebounce } from '../../../Actions/useDebounce';
+import ActionBox from '../../../components/UI/ActionBox';
 
 const UserManager = () => {
   const [searchParams] = useSearchParams();
   const { page, limit } = Object.fromEntries(searchParams);
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const [searchField, setSearchField] = useState('surname');
   const [searchValue, setSearchValue] = useState('');
@@ -59,11 +67,11 @@ const UserManager = () => {
   ) => {
     const action = e.currentTarget.id;
 
-    if (action === 'deactivate') {
-      const data = { isActive: false };
-      await customFetch.patch(`/users/${userRef}`, data);
-      toast.success(`User status has been updated successfully.`);
-    }
+    // if (action === 'deactivate') {
+    //   const data = { isActive: false };
+    //   await customFetch.patch(`/users/${userRef}`, data);
+    //   toast.success(`User status has been updated successfully.`);
+    // }
 
     if (action === 'activate') {
       const data = { isActive: true };
@@ -152,14 +160,16 @@ const UserManager = () => {
                                   />
                                 </Link>
                                 {user?.isActive ? (
-                                  <FaArrowDown
-                                    className='cursor-pointer text-rose-600'
-                                    title='Deactivate'
-                                    id='deactivate'
-                                    onClick={(e) =>
-                                      handleUserStatus(e, user.userRef)
-                                    }
-                                  />
+                                  <button
+                                    popoverTarget='action'
+                                    onClick={() => setOpen(true)}
+                                  >
+                                    <FaArrowDown
+                                      className='cursor-pointer text-rose-600'
+                                      title='Deactivate'
+                                      id='deactivate'
+                                    />
+                                  </button>
                                 ) : (
                                   <FaArrowUp
                                     className='cursor-pointer'
@@ -192,14 +202,16 @@ const UserManager = () => {
                                   />
                                 </Link>
                                 {user?.isActive ? (
-                                  <FaArrowDown
-                                    className='cursor-pointer text-rose-600'
-                                    title='Deactivate'
-                                    id='deactivate'
-                                    onClick={(e) =>
-                                      handleUserStatus(e, user.userRef)
-                                    }
-                                  />
+                                  <button
+                                    popoverTarget='action'
+                                    onClick={() => setOpen(true)}
+                                  >
+                                    <FaArrowDown
+                                      className='cursor-pointer text-rose-600'
+                                      title='Deactivate'
+                                      id='deactivate'
+                                    />
+                                  </button>
                                 ) : (
                                   <FaArrowUp
                                     className='cursor-pointer'
@@ -214,6 +226,25 @@ const UserManager = () => {
                             </span>
                           </div>
                         </div>
+
+                        {open && (
+                          <ActionBox
+                            setOpen={setOpen}
+                            title='Reason for deactivation'
+                            name='reason'
+                            btnText={['deactivating', 'deactivate']}
+                            endpoint={`/users/${user?.userRef}`}
+                            successMessage='User deactivated.'
+                            onSuccess={() =>
+                              navigate(`/account/admin/user-manager`)
+                            }
+                            defaultPayload={{
+                              userRef: user?.userRef,
+                              isActive: false,
+                            }}
+                            invalidateKeys={[['users']]}
+                          />
+                        )}
                       </div>
                     );
                   })}

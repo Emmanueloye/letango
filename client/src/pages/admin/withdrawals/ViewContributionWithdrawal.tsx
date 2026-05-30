@@ -9,7 +9,7 @@ import { formatDate, formatNumber } from '../../../helperFunc.ts/utilsFunc';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import RejectBox from '../../../components/UI/RejectBox';
+import RejectBox from '../../../components/UI/ActionBox';
 
 const ViewContributionWithdrawal = () => {
   const [isLoading, setIsLoading] = useState(false);

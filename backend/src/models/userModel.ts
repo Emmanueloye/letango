@@ -69,6 +69,7 @@ const userSchema = new Schema(
       },
       default: 'user',
     },
+    reason: { type: String, trim: true },
     personalWallet: {
       type: Number,
       default: 0,
@@ -90,9 +91,21 @@ const userSchema = new Schema(
       type: Date,
       default: Date.now(),
     },
+    lastUpdatedAt: Date,
+    lastUpdatedBy: {
+      type: Types.ObjectId,
+      ref: 'User',
+    },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } },
 );
+
+userSchema.pre(/^find/, function (this: any) {
+  this.populate({
+    path: 'lastUpdatedBy',
+    select: 'surname otherNames',
+  });
+});
 
 // hash password pre save middleware
 userSchema.pre('save', async function () {
@@ -104,7 +117,7 @@ userSchema.pre('save', async function () {
 
 userSchema.methods.correctPassword = async function (
   inputtedPassword: string,
-  savedPassword: string
+  savedPassword: string,
 ) {
   return bcrypt.compare(inputtedPassword, savedPassword);
 };
@@ -113,7 +126,7 @@ userSchema.methods.detectPasswordChange = async function (timeStamp: number) {
   if (this.passwordChangedAt) {
     const changedTime = parseInt(
       `${this.passwordChangedAt.getTime() / 1000}`,
-      10
+      10,
     );
 
     return changedTime > timeStamp;
@@ -125,7 +138,7 @@ export type IUser = InferSchemaType<typeof userSchema> & {
   _id: Types.ObjectId;
   correctPassword: (
     inputtedPassword: string,
-    savedPassword: string
+    savedPassword: string,
   ) => Promise<Boolean>;
   detectPasswordChange: (timeStamp: number) => Promise<Boolean>;
 };

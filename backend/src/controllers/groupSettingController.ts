@@ -39,6 +39,8 @@ export const updateGroupSettings = async (req: Request, res: Response) => {
     { new: true },
   );
 
+  console.log(req.params.id);
+
   if (!settings) {
     throw new AppError.NotFound('No resource found for the update.');
   }

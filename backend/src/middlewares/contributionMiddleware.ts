@@ -78,3 +78,17 @@ export const joinContributionParams = async (
   if (!req.body.code) req.body.ref = req.query.code;
   next();
 };
+
+export const filterBody = (req: Request, res: Response, next: NextFunction) => {
+  const userAllowedFields = ['name', 'description', 'logo', 'logoId'];
+  if (req.user.role === 'admin') return next(); // admin passes through untouched
+
+  // Strip down to only allowed fields for users
+  const filtered: Record<string, unknown> = {};
+  userAllowedFields.forEach((field) => {
+    if (field in req.body) filtered[field] = req.body[field];
+  });
+
+  req.body = filtered;
+  next();
+};

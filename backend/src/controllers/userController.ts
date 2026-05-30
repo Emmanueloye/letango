@@ -106,12 +106,24 @@ export const getUser = async (req: Request, res: Response) => {
 };
 
 export const UpdateUser = async (req: Request, res: Response) => {
-  const { surname, otherNames, phone, isActive } = req.body;
+  const { surname, otherNames, phone, isActive, reason } = req.body;
+
+  if (isActive === false && !reason) {
+    throw new AppError.BadRequest('Reason for deactivation is required.');
+  }
 
   //   Update user
   const user = await User.findOneAndUpdate(
     { userRef: req.params.userRef },
-    { surname, otherNames, phone, isActive },
+    {
+      surname,
+      otherNames,
+      phone,
+      isActive,
+      reason,
+      lastUpdatedAt: new Date(),
+      lastUpdatedBy: req.user?._id,
+    },
     { new: true, runValidators: true },
   );
 

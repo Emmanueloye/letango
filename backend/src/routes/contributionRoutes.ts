@@ -72,6 +72,7 @@ router.patch(
   contributionImageMiddleware.processImage,
   contributionMiddleware.checkMember,
   contributionMiddleware.checkContributionAdmin,
+  contributionMiddleware.filterBody,
   contributionController.updateContribution,
 );
 

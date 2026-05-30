@@ -221,7 +221,6 @@ export const getWithdrawal = async (req: Request, res: Response) => {
 
 export const processWithdrawal = async (req: Request, res: Response) => {
   const { withdrawalId, rejectionReason, withdrawalStatus } = req.body;
-  console.log(withdrawalId);
 
   if (!withdrawalId) {
     throw new AppError.BadRequest(
@@ -305,6 +304,7 @@ export const processWithdrawal = async (req: Request, res: Response) => {
     }
 
     if (withdrawalStatus === 'reject') {
+      console.log(rejectionReason);
       if (!rejectionReason) {
         throw new AppError.BadRequest(
           'Please provide a reason for rejecting this withdrawal.',
